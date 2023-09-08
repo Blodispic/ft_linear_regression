@@ -39,20 +39,24 @@ std::vector<std::pair<std::string, std::vector<int>>> read_csv(char **av)
     return (data);
 }
 
-void    linear_regression(std::vector<std::pair<std::string, std::vector<int>>> data, float *t0, float *t1) 
+void    linear_regression(std::vector<std::pair<std::string, std::vector<int>>> data, double *t0, double *t1) 
 {
-    float tmp0, tmp1 = -1;
-    int estimatePrice0, estimatePrice1 = 0;
+    double tmp0, tmp1 = -1;
+    long int estimatePrice0 = 0, estimatePrice1 = 0;
     int j = 0;
     int mileage, price;
+    std::cout << estimatePrice1 << std::endl;
     for (; j < data[0].second.size(); j++) {
         mileage = data[0].second[j];
         price = data[1].second[j];
-        estimatePrice0 = estimatePrice0 + (*t0 + (*t1 * mileage - price));
-        estimatePrice1 = estimatePrice1 + (*t0 + (*t1 * mileage - (price * mileage)));
+        double predictPrice = *t0 + (*t1 * mileage);
+
+        *t0 = *t0 + predictPrice - price;
+        *t1 = *t1 + (predictPrice - price) * mileage;
+        std::cout << *t0 << " - " << *t1 << std::endl << std::endl;
     }
-    tmp0 = estimatePrice0 / j; 
-    tmp1 = estimatePrice1 / j; 
+    *t0 = *t0 / j; 
+    *t1 = *t1 / j; 
 
     *t0 = tmp0;
     *t1 = tmp1;
@@ -60,7 +64,7 @@ void    linear_regression(std::vector<std::pair<std::string, std::vector<int>>> 
 
 int main(int ac, char **av)
 {
-    float t0, t1 = 0;
+    double t0, t1 = 0;
     if (ac != 2)
     {
         std::cout << "Please add a dataset File" << std::endl;
